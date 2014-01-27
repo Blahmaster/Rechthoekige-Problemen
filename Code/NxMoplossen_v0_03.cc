@@ -1,3 +1,7 @@
+//Programma om een oplossing voor een rechthoek te controleren
+//Er is mogelijkheid om files te importeren en daarna te controleren
+//TODO Checken of zwart en wit beide een oppervlak zijn
+
 #include <iostream>
 #include <fstream>
 #include <string>
