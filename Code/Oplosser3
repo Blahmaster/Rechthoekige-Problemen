@@ -429,7 +429,7 @@ int main()
 			cout << "Er is een oplossing gevonden: " << endl << endl;
 			Bord.print();
 			cout << "Naar een andere oplossing zoeken? (0 = nee, 1 = ja) ";
-			//cin >> doorzoeken;
+			cin >> doorzoeken;
 			if (doorzoeken)
 			{
 				if (Bord.einde())
