@@ -78,8 +78,10 @@ class oplossing{
 		void instellen();
 		void uitfile();
 		int aantalinsub(int,vakje*);
-		void in_een_oppervlak(int&,vakje*);
+		int tel_opp(vakje*, bool);
+		bool opp();
 		bool check_subvierkanten();
+		vakje* eerste(bool);
 		vakje* bouwrij();
 		oplossing();
 };//oplossing
@@ -140,29 +142,43 @@ void oplossing::rits(vakje* boven, vakje* onder){
 	}//while
 }//oplossing::rits
 
-
-// Nog niet getest !!!!!!!!
+//geeft eerste zwarte(true)/witte(false) vakje.
+vakje* oplossing::eerste(bool zwart){
+	vakje *p = start, *q = start;
+	for(int i = 0; i < hoogte; i++){
+		p = q;
+		for(int j = 0; j < breedte; j++){
+			if(p->info == zwart)
+				return p;
+			p = p->buren[0];
+		}
+		q = q->buren[1];
+	}
+	return p;
+}//oplossing::eerste
 
 //Telt het aantal aan elkaar gesloten vakjes
-void oplossing::in_een_oppervlak(int & teller, vakje* help){
-	int i;
-	if(help->info == true){
+int oplossing::tel_opp(vakje* help, bool zwart){
+	int i, teller = 0;
+	if(help->info == zwart){
 		if(!help->algeteld){
 			teller++;
 			help->algeteld = true;
 		}
 	}
 	else
-		return;
+		return teller;
+	for(i = 0; i < 4; i++)
+		if(help->buren[i] != NULL && help->buren[i]->algeteld == false)
+			teller += tel_opp(help->buren[i], zwart);
+	return teller;
+}//oplossing::tel_op
 
-	for(i = 0; i < 4; i++){
-		if(help->buren[i] != NULL && help->buren[i]->algeteld == false){
-			help = help->buren[i];
-			in_een_oppervlak(teller, help);
-		}
-	}
-	return;
-}
+//controleert of er exact twee oppervlaktes zijn.
+bool oplossing::opp(){
+	int geteld = tel_opp(eerste(false), false) + tel_opp(eerste(true), true);
+	return (geteld == breedte * hoogte);
+}//oplossing::opp
 
 //Telt het aantal zwarte vakjes in een subvierkant. Parameters zijn groote van subvierkant en een pointer naar de linkerbovenhoek van het vierkant
 int oplossing::aantalinsub(int n, vakje* sub){
@@ -301,6 +317,7 @@ int main(){
 	if(Oplossing.check_subvierkanten())
 		cout << "GOED!!!" << endl;
 	else
-		cout << "Helaas :(";
+		cout << "Helaas :(" << endl;
+	cout << "Opp?" << Oplossing.opp() << endl;
 	return 0;
 }//main
