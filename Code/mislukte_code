@@ -194,6 +194,7 @@ void rand::nrand(){
 	}while(!eerste());
 }//rand::nrand
 
+//Deze class zorgt ervoor dat vakjes naar elkaar kunnen wijzen.
 class hokje{
 	public:
 		vakje* Vakje;
@@ -213,6 +214,10 @@ hokje::~hokje(){
 	Vakje = NULL;
 }
 
+//Telkens als een gok gedaan wordt, wordt er een nieuwe groep aangemaakt.
+//In die groep worden alle vakjes gestopt waarvan het programma de kleur 
+//"weet". De groep wordt gedeletet als de gok leidt tot een fout.
+//Het vakje dat werd gegokt gaat als "eerste" in de groep.
 class groep{
 	public:
 		hokje* eerste;
@@ -252,6 +257,8 @@ void groep::voeg_toe(vakje* p){
 	Hokje->Vakje = p;
 }
 
+//Stapelt groepen op elkaar zodat de laatste "gokgeneratie" netjes
+//kan worden verwijderd en indien nodig ook die daarvoor.
 class stapel{
 	public:
 		groep* bovenste;
@@ -264,12 +271,14 @@ stapel::stapel(){
 	bovenste = new groep;
 }
 
+//Zet een nieuwe groep bovenop de stapel.
 void stapel::nieuw_op_stapel(){
 	groep* Groep = new groep;
 	Groep->hierna = bovenste;
 	bovenste = Groep;
 }
 
+//Verwijderd netjes de bovenste groep.
 void stapel::haal_van_stapel(){
 	groep* p = bovenste;
 	if(p != NULL){
@@ -737,6 +746,7 @@ void oplossing::spreiding(){
 	}//for
 }//oplossing::spreiding
 
+//Hulpfunctie voor rand_eis. Vult vakjes in waarvan de kleur met zeker is.
 void oplossing::c_rand(int zijde, vakje* q, bool zwart){
 	for(int i = 0; i < 4 * (zijde - 1); i++){
 		vul_in(q, zwart);
@@ -744,6 +754,7 @@ void oplossing::c_rand(int zijde, vakje* q, bool zwart){
 	}//for
 }
 
+//Hulpfunctie voor rand_eis. Handelt één subvierkant af.
 void oplossing::check_rand(int zijde, vakje* q){
 	int aant_zwart = 0, aant_wit = 0;
 	for(int i = 0; i < 4 * (zijde - 1); i++){
@@ -759,6 +770,8 @@ void oplossing::check_rand(int zijde, vakje* q){
 		fout = true;
 }
 
+//Controleert of in iedere rand van een nxn subvierkant tenminste n-1 zwarte en
+//witte vakjes zitten. Als zo'n rand 3n-1 zwarte vakjes bevat wordt de rest wit. 
 void oplossing::rand_eis(){
 	vakje *p, *q;
 	int maximaal = breedte * (breedte >= hoogte) + hoogte * (breedte < hoogte);
@@ -790,6 +803,7 @@ void oplossing::ingesloten(){
 	if(aantal_opp > 2)
 		fout = true;
 }//oppervlak::ingesloten
+
 //Zoekt naar vakjes die kunnen worden ingevuld.
 void oplossing::zoek_vakje(){
 	do{
@@ -800,7 +814,7 @@ void oplossing::zoek_vakje(){
 		spreiding();
 		ingesloten();
 	}while(ingevuld);
-}
+}//oplossing::zoek_vakje
 
 //Gokt dat een bepaald vakje zwart is. Zal dit proberen in de linkerbovenhoek
 //te doen.
@@ -827,8 +841,9 @@ void oplossing::gok(){
 		q = q->buren[hgb];
 		i++;
 	}
-}
+}//oplossing::gok
 
+//Returnt true desda alle vakjes in de oplossing info bevatten.
 bool oplossing::vol(){
 	vakje *p, *q = start;
 	for(int i = 0; i < hoogte; i++){
@@ -841,8 +856,9 @@ bool oplossing::vol(){
 		q = q->buren[1];
 	}
 	return true;
-}
+}//oplossing::vol
 
+//Zoekt naar een oplossing voor het probleem.
 void oplossing::zoek_opl(){
 	int teller = 0;
 	while(true){
@@ -887,7 +903,7 @@ void oplossing::zoek_opl(){
 			return;
 		teller++;
 	}
-}
+}//oplossing::zoek_opl
 
 //main van het programma
 int main(){
