@@ -566,10 +566,10 @@ void oplossing::vul_opp(bool zwart){
 	for(int i = 0; i < hoogte; i++){
 		p = q;
 		for(int j = 0; j < breedte; j++){
-			/*if((!p->algeteld) && (!p->bevat_info)){
+			if((!p->algeteld) && (!p->bevat_info)){
 				p->bevat_info = true;
 				p->info = zwart;
-			}*/
+			}
 			p = p->buren[0];
 		}//for
 		q = q->buren[1];
