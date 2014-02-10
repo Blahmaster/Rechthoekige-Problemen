@@ -881,9 +881,7 @@ void oplossing::zoek_opl(){
 		while(Stapel.bovenste != NULL && //delete foute groepen.
 				Stapel.bovenste->eerste->Vakje->info == false){
 			Stapel.haal_van_stapel();
-			cout << "Hello?" << endl;
 		}
-		cout << "Any body " << endl;
 		drukaf();
 		if(Stapel.bovenste != NULL){//De gok moest wit ipv zwart zijn...
 			vakje* temp = Stapel.bovenste->eerste->Vakje;
