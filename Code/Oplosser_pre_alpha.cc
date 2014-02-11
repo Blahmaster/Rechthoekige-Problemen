@@ -843,7 +843,7 @@ void oplossing::gok(){
 		j = 0;
 		p = q;
 		while(j < 2*i-1 && (p->buren[1+(j<=i)+hgb]->buren[hgb+1] != NULL)){
-			p = p->buren[(1+(j>=i)+hgb];
+			p = p->buren[1+(j>=i)+hgb];
 			if(!p->bevat_info){
 				Stapel.nieuw_op_stapel();
 				vul_in(p, true);
