@@ -69,20 +69,20 @@ vakje::vakje(){
 //kloksgewijs. Er wordt telkens gekozen voor een rand die niet de linkerboven-
 //hoek bevat (dus de linkerbovenhoek is wit).
 class rand{
-public:
-	vakje* vanaf;
-	vakje* tot;
-	vakje* volgend(vakje*);
-	vakje* vorig(vakje*);
-	vakje* spie(vakje*, bool);
-	bool bevatlb(vakje*, vakje*);
-	bool eerderv(vakje*, vakje*);
-	bool eerderr(vakje*, vakje*, vakje*, vakje*);
-	bool eerste();
-	void negatief(vakje*&, vakje*&);
-	void spiegel(vakje*&, vakje*&, bool);
-	void nrand();
-	rand();
+	public:
+		vakje* vanaf;
+		vakje* tot;
+		vakje* volgend(vakje*);
+		vakje* vorig(vakje*);
+		vakje* spie(vakje*, bool);
+		bool bevatlb(vakje*, vakje*);
+		bool eerderv(vakje*, vakje*);
+		bool eerderr(vakje*, vakje*, vakje*, vakje*);
+		bool eerste();
+		void negatief(vakje*&, vakje*&);
+		void spiegel(vakje*&, vakje*&, bool);
+		void nrand();
+		rand();
 };
 
 rand::rand(){
@@ -203,16 +203,18 @@ class hokje{
 		~hokje();
 };
 
+//Constructor voor hokje
 hokje::hokje(){
 	Vakje = NULL;
 	volgende = NULL;
-}
+}//hokje::hokje
 
+//Destructor voor hokje
 hokje::~hokje(){
 	Vakje->bevat_info = false;
 	volgende = NULL;
 	Vakje = NULL;
-}
+}//hokje::~hokje
 
 //Telkens als een gok gedaan wordt, wordt er een nieuwe groep aangemaakt.
 //In die groep worden alle vakjes gestopt waarvan het programma de kleur 
@@ -228,11 +230,12 @@ class groep{
 		~groep();
 };
 
+//Constructor voor groep
 groep::groep(){
 	eerste = NULL;
 	laatste = NULL;
 	hierna = NULL;
-}
+}//groep::groep
 
 //Zorgt ervoor dat de hele groep wordt verwijderd en alle vakjes die erin staan
 //geen info meer bevatten.
@@ -242,12 +245,13 @@ groep::~groep(){
 		q = p->volgende;
 		delete p;
 		p = q;
-	}
+	}//while
 	eerste = NULL;
 	laatste = NULL;
 	hierna = NULL;
-}
+}//groep::~groep
 
+//Comentaar?
 void groep::voeg_toe(vakje* p){
 	hokje* Hokje = new hokje;
 	if(eerste == NULL)
@@ -265,18 +269,19 @@ class stapel{
 		void nieuw_op_stapel();
 		void haal_van_stapel();
 		stapel();
-};
+};//stapel
 
+//Constructor voor stapel
 stapel::stapel(){
 	bovenste = new groep;
-}
+}//stapel::stapel
 
 //Zet een nieuwe groep bovenop de stapel.
 void stapel::nieuw_op_stapel(){
 	groep* Groep = new groep;
 	Groep->hierna = bovenste;
 	bovenste = Groep;
-}
+}//stapel::nieuw_op_stapel
 
 //Verwijderd netjes de bovenste groep.
 void stapel::haal_van_stapel(){
@@ -284,8 +289,8 @@ void stapel::haal_van_stapel(){
 	if(p != NULL){
 		bovenste = p->hierna;
 		delete p;
-	}
-}
+	}//if
+}//stapel::haal_van_stapel
 
 //Class van de mogelijke oplossing
 class oplossing{
@@ -335,12 +340,13 @@ class oplossing{
 		oplossing();
 };//oplossing
 
-oplossing::oplossing()
-{
+// Constructor voor oplossing
+oplossing::oplossing(){
 	hoogte = 8;
 	breedte = 10;
 	start = Rand.vanaf;
-	fout = gevonden = false;
+	fout = false;
+	gevonden = false;
 }//oplossing::oplossing
 
 // Regelt het bouwen van de rijen en het ritsen van het hele bord
@@ -354,10 +360,8 @@ void oplossing::bouwbord(){
 		boven = onder;
 	}//for
 	Rand.vanaf = Rand.tot = start->buren[0];
-	for(int j = 0; j < 7; j++){
+	for(int j = 0; j < 7; j++)
 		Rand.nrand();
-	}
-
 	vul_rand(Rand);
 	maak_Hoek();
 }//oplossing::bouwbord
@@ -371,7 +375,7 @@ void oplossing::bouwrij(vakje* ingang){
 		if(q != NULL)
 			q->buren[0] = p;
 		q = p;
-	}
+	}//for
 }//oplossing::bouwlijst
 
 // De twee parameters zijn beginnen van twee dubbel verbonden pointer lijsten en worden aan elkaar geritst
@@ -394,14 +398,14 @@ vakje* oplossing::eerste(){
 			if(!p->algeteld && p->bevat_info)
 				return p;
 			p = p->buren[0];
-		}
+		}//for
 		q = q->buren[1];
-	}
+	}//for
 	if(p != NULL)
 		return p;
 	else
 		return start;
-}
+}//oplossing::eerste
 
 //Telt het aantal aan elkaar gesloten vakjes
 int oplossing::tel_opp(vakje* help, bool zwart, bool leeg){
@@ -410,8 +414,8 @@ int oplossing::tel_opp(vakje* help, bool zwart, bool leeg){
 		if(!help->algeteld){
 			teller++;
 			help->algeteld = true;
-		}
-	}
+		}//if
+	}//if
 	else
 		return teller;
 	for(i = 0; i < 4; i++)
@@ -443,14 +447,15 @@ int oplossing::aantalinsub(int n, vakje* sub){
 			if(p->info)
 				aantal++;
 			p = p->buren[0];
-		}
+		}//for
 		q = q->buren[1];
 		p = q;
 		cout << endl;
-	}
+	}//for
 	return aantal;
 }//oplossing::aantalinsub
 
+// Checkt of alle subvierkanten kloppen
 bool oplossing::check_subvierkanten(){
 	int i, j;
 	int maxn = hoogte;
@@ -470,11 +475,11 @@ bool oplossing::check_subvierkanten(){
 				if(!goed_aantal(aantal, n))
 					return false;
 				p = p->buren[0];
-			}
+			}//for
 			q = q->buren[1];
 			p = q;
-		}
-	}
+		}//for
+	}//for
 	return true;
 }//oplossing::check_subvierkanten
 
@@ -492,10 +497,10 @@ void oplossing::drukaf(){
 			else
 				cout << 'x';
 			p = p->buren[0];
-		}
+		}//while
 		cout << endl;
 		q = q->buren[1];
-	}
+	}//while
 }//oplossing::drukaf
 
 //Mogelijke oplossing uit een file lezen
@@ -524,10 +529,10 @@ void oplossing::uitfile(){
 			else
 				p->info = false;
 			p = p->buren[0];
-		}
+		}//for
 		q = q->buren[1];
 		p = q;
-	}
+	}//for
 	invoer.close();
 }//oplossing::uitfile
 
@@ -601,12 +606,14 @@ void oplossing::vul_rand(rand Rand){
 	}//while
 }//oplossing::vul_rand
 
+// Commentaar?????????????????????????
 void oplossing::diagc(vakje* A[]){
 	fout = true;
 	for(int i = 0; i < 4; i++)
 		if(A[i]->info == A[(i+1)%4]->info)
 			fout = false;
-}
+}//oplossing::diagc
+
 //Hulpfunctie voor oplossing::diag. Parameter is het vakje v/d linkerbovenhoek.
 void oplossing::diagcheck(vakje* p){
 	bool kleur;
@@ -627,7 +634,7 @@ void oplossing::diagcheck(vakje* p){
 	if((A[(i+1)%4]->info == kleur) || (A[(i+3)%4]->info == kleur))
 		return;
 	vul_in(A[i], !kleur);
-}//diagcheck
+}//oplossing::diagcheck
 
 //Gaat voor alle 2x2 vierkanten na of: a11 = 1, a12 = 0, a22 = 1 geeft a21 = 0.
 void oplossing::diag(){
@@ -666,8 +673,8 @@ void oplossing::strook(vakje* q1, int i, int j, bool zwart){
 	for(int k = 0; k < 2*j-1; k++){
 		q1 = q1->buren[(i+1+(k>=j))%4];
 		vul_in(q1, zwart);
-	}
-}
+	}//for
+}//oplossing::strook
 
 //Kijkt in de hoeken of er vakjes kunnen worden ingevuld.
 void oplossing::hoek(){
@@ -696,6 +703,7 @@ void oplossing::hoek(){
 	}//for
 }//oplossing::hoek
 
+// COMENTAAR!!!!!!!!!!!!!!!!!!!!!!
 void oplossing::vierk(int zijde, vakje* q, bool zwart){
 	vakje* p = q;
 	for(int i = 0; i < zijde; i++){
@@ -706,8 +714,9 @@ void oplossing::vierk(int zijde, vakje* q, bool zwart){
 		}//for
 		p = p->buren[1];
 	}//for
-}
+}//oplossing::vierk
 
+//COMENTAAR!!!!!!!!!!!!!!!!!!!!!!!!
 void oplossing::vierkant(int zijde, vakje* q){
 	int aant_zwart = 0, aant_wit = 0, maxi;
 	vakje *p = q, *r = q;
@@ -727,8 +736,9 @@ void oplossing::vierkant(int zijde, vakje* q){
 		vierk(zijde, r, true);
 	else if (aant_zwart > maxi || aant_wit > maxi)
 		fout = true;
-}
+}//oplossing::vierkant
 
+// Hier is al een functie voor !!!!!!!
 //Ieder nxn subv moet min. n(n-1)/2 zwarte/witte hebben.
 void oplossing::spreiding(){
 	vakje *p, *q;
@@ -752,7 +762,7 @@ void oplossing::c_rand(int zijde, vakje* q, bool zwart){
 		vul_in(q, zwart);
 		q = q->buren[i / (zijde - 1)];
 	}//for
-}
+}//oplossing::c_rand
 
 //Hulpfunctie voor rand_eis. Handelt één subvierkant af.
 void oplossing::check_rand(int zijde, vakje* q){
@@ -761,14 +771,14 @@ void oplossing::check_rand(int zijde, vakje* q){
 		aant_zwart += q->bevat_info * q->info;
 		aant_wit += q->bevat_info * (!q->info);
 		q = q->buren[i / (zijde - 1)];
-	}
+	}//for
 	if(aant_zwart == 3 * (zijde - 1)) //Aamtal zwarte vakjes is maximaal.
 		c_rand(zijde, q, false);
 	else if(aant_wit == 3 * (zijde - 1)) //Aantal witte vakjes is maximaal.
 		c_rand(zijde, q, true);
 	else if(aant_zwart > 3 * (zijde - 1) || aant_wit > 3 * (zijde - 1))
 		fout = true;
-}
+}//oplossing::check_rand
 
 //Controleert of in iedere rand van een nxn subvierkant tenminste n-1 zwarte en
 //witte vakjes zitten. Als zo'n rand 3n-1 zwarte vakjes bevat wordt de rest wit. 
@@ -806,8 +816,8 @@ void oplossing::ingesloten(){
 
 //Zoekt naar vakjes die kunnen worden ingevuld.
 void oplossing::zoek_vakje(){
+	ingevuld = false;
 	do{
-		ingevuld = false;
 		hoek();
 		diag();
 		rand_eis();
@@ -836,11 +846,11 @@ void oplossing::gok(){
 				Stapel.nieuw_op_stapel();
 				vul_in(p, true);
 				return;
-			}
-		}
+			}//if
+		}//while
 		q = q->buren[hgb];
 		i++;
-	}
+	}//while
 }//oplossing::gok
 
 //Returnt true desda alle vakjes in de oplossing info bevatten.
@@ -852,9 +862,9 @@ bool oplossing::vol(){
 			if(!p->bevat_info)
 				return false;
 			p = p->buren[0];
-		}
+		}//for
 		q = q->buren[1];
-	}
+	}//for
 	return true;
 }//oplossing::vol
 
@@ -864,7 +874,6 @@ void oplossing::zoek_opl(){
 	while(true){
 		fout = false;
 		while(!fout){
-			fout = false;
 			zoek_vakje();
 			gok();
 			if(vol()){
@@ -872,9 +881,9 @@ void oplossing::zoek_opl(){
 				if(!fout){
 					gevonden = true;
 					return;
-				}
-			}
-		}
+				}//if
+			}//if
+		}//while
 		//De zooi die hierna komt zou in een stapel-functie moeten komen.
 		//Hierin worden de "fouten" afgehandeld.
 		drukaf();
