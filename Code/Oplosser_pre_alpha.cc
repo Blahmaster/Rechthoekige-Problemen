@@ -251,7 +251,8 @@ groep::~groep(){
 	hierna = NULL;
 }//groep::~groep
 
-//Comentaar?
+//Voegt een hokje met daarin een bepaald vakje toe aan de groep.
+//De eerste keer dat een hokje wordt toegevoegd, wordt "eerste" dit Hokje.
 void groep::voeg_toe(vakje* p){
 	hokje* Hokje = new hokje;
 	if(eerste == NULL)
@@ -292,7 +293,7 @@ void stapel::haal_van_stapel(){
 	}//if
 }//stapel::haal_van_stapel
 
-//Class van de mogelijke oplossing
+//Class van de mogelijke oplossing.
 class oplossing{
 	private:
 		int hoogte, breedte;
@@ -300,7 +301,6 @@ class oplossing{
 		vakje* start;
 		bool ingevuld;//Tijdens zoeken: geeft aan of er wel of niet iets is ~
 		bool fout;
-		bool gevonden;
 		stapel Stapel;
 		rand Rand;//									 1 1 1 1	0	linksboven is de eerste
 		int Hoek[4];//De volgende hoek geeft 4: 1 ? ? ?	?	hoek in de array.
@@ -325,6 +325,7 @@ class oplossing{
 		void c_rand(int, vakje*, bool);
 		void check_rand(int, vakje*);
 		void rand_eis();//snelheid: O(n^4/6)
+		void tel_opp(vakje*, bool);
 		void ingesloten();
 		void vul_opp(bool);
 		void vul_rand(rand);
@@ -333,9 +334,7 @@ class oplossing{
 		void zoek_opl();
 		int aantalinsub(int,vakje*);
 		vakje* eerste();
-		int tel_opp(vakje*, bool, bool);
 		bool vol();
-		bool opp();
 		bool check_subvierkanten();
 		oplossing();
 };//oplossing
@@ -345,8 +344,6 @@ oplossing::oplossing(){
 	hoogte = 8;
 	breedte = 10;
 	start = Rand.vanaf;
-	fout = false;
-	gevonden = false;
 }//oplossing::oplossing
 
 // Regelt het bouwen van de rijen en het ritsen van het hele bord
@@ -359,9 +356,9 @@ void oplossing::bouwbord(){
 		rits(boven, onder);
 		boven = onder;
 	}//for
+	//De volgende vier regels zouden in een rand::functie moeten komen.
 	Rand.vanaf = Rand.tot = start->buren[0];
-	for(int j = 0; j < 7; j++)
-		Rand.nrand();
+	Rand.nrand();
 	vul_rand(Rand);
 	maak_Hoek();
 }//oplossing::bouwbord
@@ -408,27 +405,16 @@ vakje* oplossing::eerste(){
 }//oplossing::eerste
 
 //Telt het aantal aan elkaar gesloten vakjes
-int oplossing::tel_opp(vakje* help, bool zwart, bool leeg){
-	int i, teller = 0;
-	if(help->info == zwart || (leeg * !help->bevat_info)){
-		if(!help->algeteld){
-			teller++;
-			help->algeteld = true;
-		}//if
-	}//if
+void oplossing::tel_opp(vakje* help, bool zwart){
+	int i;
+	if((help->info == zwart || !help->bevat_info) && !help->algeteld)
+		help->algeteld = true;
 	else
-		return teller;
+		return;
 	for(i = 0; i < 4; i++)
 		if(help->buren[i] != NULL && help->buren[i]->algeteld == false)
-			teller += tel_opp(help->buren[i], zwart, leeg);
-	return teller;
-}
-
-//controleert of er exact twee oppervlaktes zijn.
-bool oplossing::opp(){
-	int geteld = tel_opp(eerste(), false, false) +
-					 tel_opp(eerste(), true, false);
-	return (geteld == breedte * hoogte);
+			tel_opp(help->buren[i], zwart);
+	return;
 }
 
 //Telt het aantal zwarte vakjes in een subvierkant. Parameters zijn groote van subvierkant en een pointer naar de linkerbovenhoek van het vierkant
@@ -565,22 +551,6 @@ void oplossing::niets_geteld(bool slechts_leeg){
 	}//for
 }//oplossing::niets_geteld
 
-//Vult een oppervlak zwart(true) als wit niet met dit oppervlak kan verbinden.
-void oplossing::vul_opp(bool zwart){
-	vakje *q = start, *p;
-	for(int i = 0; i < hoogte; i++){
-		p = q;
-		for(int j = 0; j < breedte; j++){
-			if((!p->algeteld) && (!p->bevat_info)){
-				p->bevat_info = true;
-				p->info = zwart;
-			}
-			p = p->buren[0];
-		}//for
-		q = q->buren[1];
-	}//for
-}//oplossing::vul_opp
-
 //Kleurt een vakje zwart(true) of wit(false) in.
 void oplossing::vul_in(vakje* p, bool zwart){
 	if(!p->bevat_info){
@@ -589,6 +559,20 @@ void oplossing::vul_in(vakje* p, bool zwart){
 		Stapel.bovenste->voeg_toe(p);
 	}
 }//oplossing::kleur
+
+//Vult een oppervlak zwart(true) als wit niet met dit oppervlak kan verbinden.
+void oplossing::vul_opp(bool zwart){
+	vakje *q = start, *p;
+	for(int i = 0; i < hoogte; i++){
+		p = q;
+		for(int j = 0; j < breedte; j++){
+			if(!p->algeteld)
+				vul_in(p, zwart);
+			p = p->buren[0];
+		}//for
+		q = q->buren[1];
+	}//for
+}//oplossing::vul_opp
 
 //Kleurt de rand zwart in van "vanaf" tot en met "tot". De rest wordt wit.
 void oplossing::vul_rand(rand Rand){
@@ -606,7 +590,7 @@ void oplossing::vul_rand(rand Rand){
 	}//while
 }//oplossing::vul_rand
 
-// Commentaar?????????????????????????
+//Hulpfunctie voor diagcheck. Vult in als er wat ingevuld kan worden.
 void oplossing::diagc(vakje* A[]){
 	fout = true;
 	for(int i = 0; i < 4; i++)
@@ -703,7 +687,7 @@ void oplossing::hoek(){
 	}//for
 }//oplossing::hoek
 
-// COMENTAAR!!!!!!!!!!!!!!!!!!!!!!
+//Hulpfunctie voor vierkant(). Vult vakjes in als ze ingevuld kunnen worden.
 void oplossing::vierk(int zijde, vakje* q, bool zwart){
 	vakje* p = q;
 	for(int i = 0; i < zijde; i++){
@@ -716,7 +700,8 @@ void oplossing::vierk(int zijde, vakje* q, bool zwart){
 	}//for
 }//oplossing::vierk
 
-//COMENTAAR!!!!!!!!!!!!!!!!!!!!!!!!
+//Hulpfunctie voor spreiding. Handelt één vierkantje af. De pointer wijst naar
+//de linkerbovenhoek van dit vierkant.
 void oplossing::vierkant(int zijde, vakje* q){
 	int aant_zwart = 0, aant_wit = 0, maxi;
 	vakje *p = q, *r = q;
@@ -738,8 +723,8 @@ void oplossing::vierkant(int zijde, vakje* q){
 		fout = true;
 }//oplossing::vierkant
 
-// Hier is al een functie voor !!!!!!!
-//Ieder nxn subv moet min. n(n-1)/2 zwarte/witte hebben.
+//Deze functie zorgt voor invulling als dat kan. Er kan dus wat worden ingevuld
+//als er in een nxn subvierkant n(n+1)/2 zwarte of witte vakjes zitten.
 void oplossing::spreiding(){
 	vakje *p, *q;
 	int maximaal = breedte * (breedte >= hoogte) + hoogte * (breedte < hoogte);
@@ -806,7 +791,7 @@ void oplossing::ingesloten(){
 	while(!p->algeteld){
 		niets_geteld(true);
 		aantal_opp++;
-		tel_opp(p, p->info, true);
+		tel_opp(p, p->info);
 		vul_opp(!p->info);
 		p = eerste();
 	}//while
@@ -816,8 +801,8 @@ void oplossing::ingesloten(){
 
 //Zoekt naar vakjes die kunnen worden ingevuld.
 void oplossing::zoek_vakje(){
-	ingevuld = false;
 	do{
+		ingevuld = false;
 		hoek();
 		diag();
 		rand_eis();
@@ -840,15 +825,15 @@ void oplossing::gok(){
 		q = q->buren[hgb];
 		j = 0;
 		p = q;
-		while(j < i*(i+1)/2 && p->buren[(j<=i)+hgb]->buren[hgb+1]){
-			p = p->buren[(j<=i)+hgb];
+		while(j < 2*i-1 && (p->buren[1+(j<=i)+hgb]->buren[hgb+1] != NULL)){
+			p = p->buren[(1+(j>=i)+hgb];
 			if(!p->bevat_info){
 				Stapel.nieuw_op_stapel();
 				vul_in(p, true);
 				return;
 			}//if
+			j++;
 		}//while
-		q = q->buren[hgb];
 		i++;
 	}//while
 }//oplossing::gok
@@ -874,24 +859,24 @@ void oplossing::zoek_opl(){
 	while(true){
 		fout = false;
 		while(!fout){
+			fout = false;
 			zoek_vakje();
 			gok();
 			if(vol()){
 				zoek_vakje();
 				if(!fout){
-					gevonden = true;
+					cout << "gevonden!!!" << endl;
+					drukaf();
 					return;
 				}//if
 			}//if
 		}//while
 		//De zooi die hierna komt zou in een stapel-functie moeten komen.
 		//Hierin worden de "fouten" afgehandeld.
-		drukaf();
 		while(Stapel.bovenste != NULL && //delete foute groepen.
 				Stapel.bovenste->eerste->Vakje->info == false){
 			Stapel.haal_van_stapel();
-		}
-		drukaf();
+		}//while
 		if(Stapel.bovenste != NULL){//De gok moest wit ipv zwart zijn...
 			vakje* temp = Stapel.bovenste->eerste->Vakje;
 			Stapel.haal_van_stapel();
@@ -903,13 +888,19 @@ void oplossing::zoek_opl(){
 		else{//Er moet een nieuwe rand komen, want deze is fout.
 			Rand.nrand();
 			vul_rand(Rand);
+			if(start->info){
+				cout << "Geen oplossing gevonden." << endl;
+				return;
+			}
 			Stapel.nieuw_op_stapel();
-		}
-		drukaf();
-		if (teller > 160)
-			return;
+			maak_Hoek();
+		}//else
+		if ((teller + 1) % 10000 == 0){
+			cout << "tussenstand: " << teller << endl;
+			drukaf();
+		}//if
 		teller++;
-	}
+	}//while
 }//oplossing::zoek_opl
 
 //main van het programma
@@ -926,11 +917,6 @@ int main(){
 		Oplossing.bouwbord();
 	}
 	Oplossing.drukaf();
-	Oplossing.zoek_opl();/*
-	if(Oplossing.check_subvierkanten())
-		cout << "GOED!!!" << endl;
-	else
-		cout << "Helaas :(" << endl;*/
-	//cout << "Opp?" << Oplossing.opp() << endl;
+	Oplossing.zoek_opl();
 	return 0;
 }//main
