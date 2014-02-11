@@ -620,7 +620,9 @@ void oplossing::diagcheck(vakje* p){
 	vul_in(A[i], !kleur);
 }//oplossing::diagcheck
 
-//Gaat voor alle 2x2 vierkanten na of: a11 = 1, a12 = 0, a22 = 1 geeft a21 = 0.
+//				0 1	
+//Als deze functie bijv. 	1 x	tegenkomt, vult deze x = 1 in.
+//Gaat voor alle 2x2 vierkanten na wat er (op deze manier) kan worden ingevuld.
 void oplossing::diag(){
 	vakje *q = start, *p;
 	for(int i = 0; i < hoogte - 1; i++){
@@ -660,6 +662,10 @@ void oplossing::strook(vakje* q1, int i, int j, bool zwart){
 	}//for
 }//oplossing::strook
 
+//		1 0 0 0
+//		1 a b c
+//		1 0 d e
+//In bijv. 	1 1 1 1		worden d en e door deze functie beide gelijk aan 1.
 //Kijkt in de hoeken of er vakjes kunnen worden ingevuld.
 void oplossing::hoek(){
 	vakje *p = start, *q1, *q2;
@@ -723,6 +729,9 @@ void oplossing::vierkant(int zijde, vakje* q){
 		fout = true;
 }//oplossing::vierkant
 
+//In bijv.	1 1 1	worden a, b en c gelijk aan 0 gemaakt.
+//		a b c
+//		1 1 1
 //Deze functie zorgt voor invulling als dat kan. Er kan dus wat worden ingevuld
 //als er in een nxn subvierkant n(n+1)/2 zwarte of witte vakjes zitten.
 void oplossing::spreiding(){
@@ -765,6 +774,10 @@ void oplossing::check_rand(int zijde, vakje* q){
 		fout = true;
 }//oplossing::check_rand
 
+//		1 1 1 1
+//		1 0 a b
+//		c d e f
+//In bijv.	1 1 1 1		worden b, c en f gelijk aan 1 gemaakt.
 //Controleert of in iedere rand van een nxn subvierkant tenminste n-1 zwarte en
 //witte vakjes zitten. Als zo'n rand 3n-1 zwarte vakjes bevat wordt de rest wit. 
 void oplossing::rand_eis(){
@@ -783,6 +796,10 @@ void oplossing::rand_eis(){
 	}//for
 }//oplossing::rand_eis
 
+//		1 1 a b
+//		0 c 1 d
+//In bijv.	0 1 e 1		worden a, b en d gelijk aan 1.
+//		0 0 0 1		(wit is ingesloten)
 //Zoekt een ingesloten oppervlak en kleurt de rest anders dan de kleur v/h opp.
 void oplossing::ingesloten(){
 	int aantal_opp = 0;
