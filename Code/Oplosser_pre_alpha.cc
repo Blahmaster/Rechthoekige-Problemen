@@ -311,6 +311,7 @@ class oplossing{
 		void rand_kleur(rand);
 		void instellen();
 		void uitfile();
+		void naarfile();
 		void niets_geteld(bool);
 		void vul_in(vakje*, bool);
 		void diagc(vakje* A[]);
@@ -521,6 +522,35 @@ void oplossing::uitfile(){
 	}//for
 	invoer.close();
 }//oplossing::uitfile
+
+//Schrijft een oplossing weg naar een tekstbestand.
+void oplossing::naarfile(){
+	char antwoord;
+	cout << "Moet deze oplossing weggeschreven worden (j/n)? ";
+	cin >> antwoord;
+	if(antwoord == 'n')
+		return;
+	string file_naam;
+	cout << "Geef de naam van het tekstbestand op: ";
+	cin >> file_naam;
+	ofstream tekstbestand (file_naam.c_str());
+	tekstbestand << hoogte << ' ' << breedte << endl;
+
+	vakje *q = start, *p;
+	for(int i = 0; i < hoogte; i++){
+		p = q;
+		for(int j = 0; j < breedte; j++){
+			tekstbestand << char(p->info + '0');
+			if(j < breedte - 1)
+				tekstbestand << ' ';
+			p = p->buren[0];
+		}
+		if(i < hoogte - 1)
+			tekstbestand << endl;
+		q = q->buren[1];
+	}
+	tekstbestand.close();
+}
 
 // Gebruiker kan parameters van de mogelijke oplossing instellen
 void oplossing::instellen(){
@@ -882,8 +912,9 @@ void oplossing::zoek_opl(){
 			if(vol()){
 				zoek_vakje();
 				if(!fout){
-					cout << "gevonden!!!" << endl;
+					cout << "Gevonden! (" << hoogte << 'x' << breedte << ")" << endl;
 					drukaf();
+					naarfile();
 					return;
 				}//if
 			}//if
