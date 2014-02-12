@@ -526,20 +526,20 @@ void oplossing::uitfile(){
 //Schrijft een oplossing weg naar een tekstbestand.
 void oplossing::naarfile(){
 	char antwoord;
-	cout << "Moet deze oplossing weggeschreven worden (j/n)? ";
+	string file_naam;
+	vakje *q = start, *p;
+	int i, j;
+	cout << "Moet deze oplossing weggeschreven worden (Y/n)? ";
 	cin >> antwoord;
 	if(antwoord == 'n')
 		return;
-	string file_naam;
 	cout << "Geef de naam van het tekstbestand op: ";
 	cin >> file_naam;
 	ofstream tekstbestand (file_naam.c_str());
 	tekstbestand << hoogte << ' ' << breedte << endl;
-
-	vakje *q = start, *p;
-	for(int i = 0; i < hoogte; i++){
+	for(i = 0; i < hoogte; i++){
 		p = q;
-		for(int j = 0; j < breedte; j++){
+		for(j = 0; j < breedte; j++){
 			tekstbestand << char(p->info + '0');
 			if(j < breedte - 1)
 				tekstbestand << ' ';
