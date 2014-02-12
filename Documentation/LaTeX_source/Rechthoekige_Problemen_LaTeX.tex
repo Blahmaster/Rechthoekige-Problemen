@@ -1,0 +1,72 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[dutch]{babel}
+\usepackage{parskip}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+
+\begin{document}
+
+\begin{center}
+\LARGE{Rechthoekige Problemen} \\
+\end{center}
+
+\section{Inleiding}
+
+
+\section{Het probleem}
+Het probleem luid als volgt:
+\\
+Beschouw een rooster van $m \times n$ hokjes. Dit rooster moet dan op zo een manier worden ingekleurd zodat voor ieder subvierkant het aantal gekleurde hokjes en het aantal lege hokjes beide minimaal voldoen aan de formule:
+\[
+Hokjes \geq \frac{x(x-1)}{2}.
+\]
+Hierin is $x$ de grote van een subvierkant.
+\\
+Verder moet voor het hele rooster gelden dat het hele gekleurde gebied een oppervlak vormt. Dus ieder gekleurd hokje zit vast aan een ander gekleurd hokje (Let op: niet diagonaal dit geeft namelijk een hele makkelijke oplossing). Dit zelfde geldt voor de lege hokjes.
+
+\section{Proposities}
+\subsection{2 bij 2 subvierkant}
+Er kan met Grafentheorie bewezen worden dat het volgende niet kan. In de tabel betekent $1$ ingevuld en $0$ leeg. Dit geldt voor alle $2 \times 2$ subvierkanten:
+\[
+\begin{array}{|r|r|}
+\hline
+1 & 0 \\
+\hline
+0 & 1 \\
+\hline
+\end{array}
+\]
+
+\subsection{Gewoon handig}
+Dit is eigenlijk geen propositie maar meer om snel $3 \times 3$ subvierkanten te controleren. Als u een "U" ziet is een $3 \times 3$ fout. Dus:
+\[
+\begin{array}{|r|r|r|}
+\hline
+1 & 1 & 1 \\
+\hline
+0 & 0 & 1 \\
+\hline
+1 & 1 & 1 \\
+\hline
+\end{array}
+\]
+Deze klopt niet omdat er niet aan de voorwaarde voor het aantal wordt voldaan (te weinig leeg: moet minstens 3). Deze is makkelijk te herkennen in een vermoede oplossing. Dit zelfde geldt als er een "H" wordt gezien. Dus:
+\[
+\begin{array}{|r|r|r|}
+\hline
+1 & 1 & 1 \\
+\hline
+0 & 1 & 0 \\
+\hline
+1 & 1 & 1 \\
+\hline
+\end{array}
+\]
+Deze twee gevallen betekenen natuurlijk niet dat dit de enige twee foute mogelijkheden zijn in een $3 \times 3$ subvierkant.
+
+
+
+\end{document}
