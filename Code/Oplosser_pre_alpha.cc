@@ -302,10 +302,10 @@ class oplossing{
 		bool ingevuld;//Tijdens zoeken: geeft aan of er wel of niet iets is ~
 		bool fout;
 		stapel Stapel;
-		rand Rand;//									 1 1 1 1	0	linksboven is de eerste
+		rand Rand;//				1 1 1 1	0	linksboven is de eerste
 		int Hoek[4];//De volgende hoek geeft 4: 1 ? ? ?	?	hoek in de array.
-		void drukaf();//								 1 ? ? ? ?	Daarna rechtsboven,
-		void bouwbord();//							 1 ? ? ?	?	linksonder, rechtsonder
+		void drukaf();//			1 ? ? ? ?	Daarna rechtsboven,
+		void bouwbord();//			1 ? ? ?	?	linksonder, rechtsonder
 		void bouwrij(vakje*);
 		void rits(vakje*, vakje*);
 		void rand_kleur(rand);
@@ -622,10 +622,12 @@ void oplossing::vul_rand(rand Rand){
 
 //Hulpfunctie voor diagcheck. Vult in als er wat ingevuld kan worden.
 void oplossing::diagc(vakje* A[]){
-	fout = true;
-	for(int i = 0; i < 4; i++)
-		if(A[i]->info == A[(i+1)%4]->info)
-			fout = false;
+	if(!fout){
+		fout = true;
+		for(int i = 0; i < 4; i++)
+			if(A[i]->info == A[(i+1)%4]->info)
+				fout = false;
+	}
 }//oplossing::diagc
 
 //Hulpfunctie voor oplossing::diag. Parameter is het vakje v/d linkerbovenhoek.
