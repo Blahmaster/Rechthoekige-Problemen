@@ -79,6 +79,8 @@ class rand{
 		bool eerderv(vakje*, vakje*);
 		bool eerderr(vakje*, vakje*, vakje*, vakje*);
 		bool eerste();
+		bool ineenhoek(vakje* p);
+		bool vierkant2x2();
 		void negatief(vakje*&, vakje*&);
 		void spiegel(vakje*&, vakje*&, bool);
 		void nrand();
@@ -183,6 +185,42 @@ bool rand::eerste(){
 	return true;
 }//rand::eerste
 
+//Geeft true desda p een "hoekvakje" aanwijst.
+bool rand::ineenhoek(vakje* p){
+	for(int i = 0; i < 4; i++)
+		if(p->buren[i] == NULL && p->buren[(i+1)%4] == NULL)
+			return true;
+	return false;
+}//rand::ineenhoek
+
+//Returnt false desda er met deze functie vastgesteld kan worden dat er geen
+//oplossing is met deze rand.
+bool rand::vierkant2x2(){
+	bool schaakbordkleur = true;
+	bool zwarte_rand;
+	int vzwart = 0; //aantal 2x2 vierkanten zonder 1 met zwarte linkerbovenhoek.
+	int vwit = 0; //aantal 2x2 vierkanten zonder 1 met witte linkerbovenhoek.
+	vakje *p = vanaf;
+	while(p->buren[2] != NULL || p->buren[3] != NULL) //Brengt p linksboven.
+		p = vorig(p);
+
+	do{
+		if(vanaf == volgend(p))
+			zwarte_rand = true;
+		if(tot == vorig(p))
+			zwarte_rand = false;
+		if(!zwarte_rand){
+			if(schaakbordkleur)
+				vzwart++;
+			else
+				vwit++;
+		}
+		p = volgend(p);
+		schaakbordkleur = !schaakbordkleur;
+	}while(p->buren[2] != NULL || p->buren[3] != NULL);
+	return (vzwart == vwit);
+}//rand::vierkant2x2
+
 //Maakt een volgende rand en let op symmetrie.
 void rand::nrand(){
 	do{
@@ -191,7 +229,7 @@ void rand::nrand(){
 			vanaf = volgend(vanaf);
 			tot = vanaf;
 		}
-	}while(!eerste());
+	}while(!eerste() || !vierkant2x2());
 }//rand::nrand
 
 //Deze class zorgt ervoor dat vakjes naar elkaar kunnen wijzen.
