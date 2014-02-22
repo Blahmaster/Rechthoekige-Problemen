@@ -25,9 +25,7 @@ void converteer(){
 	uitvoer.open(uitfile.c_str(), ios::out);
 
 	invoer >> hoogte;
-	cout << hoogte << endl;
 	invoer >> breedte;
-	cout << breedte << endl;
 
 	uitvoer << "\\newcounter{row}" << '\n';
 	uitvoer << "\\newcounter{col}" << '\n';
@@ -42,10 +40,10 @@ void converteer(){
 	}
 	uitvoer << "} {" << '\n';
 	uitvoer << "		\\edef\\x{\\value{col}}" << '\n';
-   uitvoer << "	 	\\edef\\y{";
+	uitvoer << "	 	\\edef\\y{";
 	uitvoer << hoogte - 1 << " - \\value{row}}" << '\n';
-   uitvoer << "	 	\\ifnum \\n = 1 \\draw[fill=black,scale=0.5] (\\x,\\y) rectangle (\\x+1,\\y+1);" << '\n';
-   uitvoer << "	 	\\fi" << '\n';
+	uitvoer << "	 	\\ifnum \\n = 1 \\draw[fill=black,scale=0.5] (\\x,\\y) rectangle (\\x+1,\\y+1);" << '\n';
+	uitvoer << "	 	\\fi" << '\n';
 	uitvoer << "		\\stepcounter{col}" << '\n';
 	uitvoer << "	}" << '\n';
 	uitvoer << "	\\stepcounter{row}" << '\n';
@@ -71,5 +69,6 @@ void converteer(){
 // Main van het programma
 int main(){
 	converteer();
+	cout << "Done!" << endl;
 	return 0;
 }//main
