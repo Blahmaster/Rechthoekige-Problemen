@@ -27,10 +27,9 @@ void converteer(){
 	invoer >> hoogte;
 	invoer >> breedte;
 
-	uitvoer << "\\newcommand\\vakje[2]{" << '\n';
+	uitvoer << "\\newcommand\\vakje[3]{" << '\n';
 	uitvoer << "	\\edef\\x{#1}" << '\n';
-	uitvoer << "	\\edef\\y{";
-	uitvoer << hoogte - 1 << " - #2}" << '\n';
+	uitvoer << "	\\edef\\y{#3 - #2}" << '\n';
 	uitvoer << "	\\draw[fill=black,scale=0.5] (\\x,\\y) rectangle (\\x+1,\\y+1);" << '\n';
 	uitvoer << "}" << '\n';
 	uitvoer << "\\begin{tikzpicture}" << '\n';
@@ -38,7 +37,7 @@ void converteer(){
 		for(j = 0; j < breedte; j++){
 			invoer >> info;
 			if(info == 1)
-				uitvoer << "\\vakje{" << j << "}{" << i << "} ";
+				uitvoer << "\\vakje{" << j << "}{" << i << "}{" << hoogte-1 << "} ";
 		}
 		uitvoer << '\n';
 	}

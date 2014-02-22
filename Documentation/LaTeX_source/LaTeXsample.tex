@@ -1,0 +1,53 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[dutch]{babel}
+\usepackage{parskip}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{tikz}
+
+\newcommand\vakje[3]{
+	\edef\x{#1}
+	\edef\y{#3 - #2}
+	\draw[fill=black,scale=0.5] (\x,\y) rectangle (\x+1,\y+1);
+}
+
+\begin{document}
+
+\begin{tikzpicture}
+\vakje{0}{0}{7} \vakje{1}{0}{7} \vakje{2}{0}{7} \vakje{3}{0}{7} \vakje{4}{0}{7} \vakje{5}{0}{7} \vakje{6}{0}{7} \vakje{7}{0}{7} \vakje{8}{0}{7} \vakje{9}{0}{7} 
+\vakje{0}{1}{7} \vakje{4}{1}{7} \vakje{9}{1}{7} 
+\vakje{0}{2}{7} \vakje{2}{2}{7} \vakje{6}{2}{7} \vakje{7}{2}{7} \vakje{9}{2}{7} 
+\vakje{0}{3}{7} \vakje{2}{3}{7} \vakje{3}{3}{7} \vakje{5}{3}{7} \vakje{6}{3}{7} \vakje{9}{3}{7} 
+\vakje{0}{4}{7} \vakje{3}{4}{7} \vakje{4}{4}{7} \vakje{5}{4}{7} \vakje{8}{4}{7} \vakje{9}{4}{7} 
+\vakje{0}{5}{7} \vakje{1}{5}{7} \vakje{5}{5}{7} \vakje{6}{5}{7} \vakje{8}{5}{7} 
+\vakje{0}{6}{7} \vakje{3}{6}{7} \vakje{6}{6}{7} \vakje{7}{6}{7} \vakje{8}{6}{7} 
+\vakje{0}{7}{7} \vakje{1}{7}{7} \vakje{2}{7}{7} \vakje{3}{7}{7} \vakje{4}{7}{7} 
+\draw[scale=0.5] (0,0) grid (10,8);
+\end{tikzpicture}
+
+\begin{tikzpicture}
+\vakje{0}{0}{7} \vakje{1}{0}{7} \vakje{2}{0}{7} \vakje{3}{0}{7} \vakje{4}{0}{7} \vakje{5}{0}{7} \vakje{6}{0}{7} \vakje{7}{0}{7} \vakje{8}{0}{7} \vakje{9}{0}{7} 
+\vakje{0}{1}{7} \vakje{4}{1}{7} \vakje{9}{1}{7} 
+\vakje{0}{2}{7} \vakje{2}{2}{7} \vakje{6}{2}{7} \vakje{7}{2}{7} \vakje{9}{2}{7} 
+\vakje{2}{3}{7} \vakje{3}{3}{7} \vakje{5}{3}{7} \vakje{6}{3}{7} \vakje{9}{3}{7} 
+\vakje{1}{4}{7} \vakje{2}{4}{7} \vakje{5}{4}{7} \vakje{8}{4}{7} \vakje{9}{4}{7} 
+\vakje{1}{5}{7} \vakje{4}{5}{7} \vakje{5}{5}{7} \vakje{6}{5}{7} \vakje{8}{5}{7} 
+\vakje{1}{6}{7} \vakje{2}{6}{7} \vakje{3}{6}{7} \vakje{4}{6}{7} \vakje{6}{6}{7} \vakje{7}{6}{7} \vakje{8}{6}{7} 
+\draw[scale=0.5] (0,0) grid (10,8);
+\end{tikzpicture}
+
+\begin{tikzpicture}
+\vakje{0}{0}{6} \vakje{1}{0}{6} \vakje{2}{0}{6} \vakje{3}{0}{6} \vakje{4}{0}{6} \vakje{5}{0}{6} \vakje{6}{0}{6} \vakje{7}{0}{6} \vakje{8}{0}{6} 
+\vakje{0}{1}{6} \vakje{3}{1}{6} \vakje{5}{1}{6} 
+\vakje{0}{2}{6} \vakje{1}{2}{6} \vakje{7}{2}{6} 
+\vakje{0}{3}{6} \vakje{3}{3}{6} \vakje{4}{3}{6} \vakje{5}{3}{6} \vakje{6}{3}{6} \vakje{7}{3}{6} 
+\vakje{0}{4}{6} \vakje{1}{4}{6} \vakje{4}{4}{6} \vakje{7}{4}{6} 
+\vakje{0}{5}{6} \vakje{3}{5}{6} \vakje{4}{5}{6} \vakje{6}{5}{6} \vakje{7}{5}{6} 
+\vakje{0}{6}{6} \vakje{1}{6}{6} \vakje{2}{6}{6} \vakje{3}{6}{6} 
+\draw[scale=0.5] (0,0) grid (9,7);
+\end{tikzpicture}
+
+\end{document}
