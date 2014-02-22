@@ -27,36 +27,18 @@ void converteer(){
 	invoer >> hoogte;
 	invoer >> breedte;
 
-	uitvoer << "\\newcounter{row}" << '\n';
-	uitvoer << "\\newcounter{col}" << '\n';
-
-	uitvoer << "\\newcommand\\lijn[" << breedte << "]{" << '\n';
-	uitvoer << "	\\setcounter{col}{0}" << '\n';
-	uitvoer << "	\\foreach \\n in {";
-	for(i = 0; i < breedte; i++){
-		uitvoer << "#" << i+1;
-		if(i != breedte - 1)
-			uitvoer << ",";
-	}
-	uitvoer << "} {" << '\n';
-	uitvoer << "		\\edef\\x{\\value{col}}" << '\n';
-	uitvoer << "	 	\\edef\\y{";
-	uitvoer << hoogte - 1 << " - \\value{row}}" << '\n';
-	uitvoer << "	 	\\ifnum \\n = 1 \\draw[fill=black,scale=0.5] (\\x,\\y) rectangle (\\x+1,\\y+1);" << '\n';
-	uitvoer << "	 	\\fi" << '\n';
-	uitvoer << "		\\stepcounter{col}" << '\n';
-	uitvoer << "	}" << '\n';
-	uitvoer << "	\\stepcounter{row}" << '\n';
+	uitvoer << "\\newcommand\\vakje[2]{" << '\n';
+	uitvoer << "	\\edef\\x{#1}" << '\n';
+	uitvoer << "	\\edef\\y{";
+	uitvoer << hoogte - 1 << " - #2}" << '\n';
+	uitvoer << "	\\draw[fill=black,scale=0.5] (\\x,\\y) rectangle (\\x+1,\\y+1);" << '\n';
 	uitvoer << "}" << '\n';
 	uitvoer << "\\begin{tikzpicture}" << '\n';
 	for(i = 0; i < hoogte; i++){
-		uitvoer << "\\lijn";
 		for(j = 0; j < breedte; j++){
 			invoer >> info;
 			if(info == 1)
-				uitvoer << "{1}";
-			else
-				uitvoer << "{0}";
+				uitvoer << "\\vakje{" << j << "}{" << i << "} ";
 		}
 		uitvoer << '\n';
 	}
