@@ -80,7 +80,6 @@ class rand{
 		bool eerderv(vakje*, vakje*);
 		bool eerderr(vakje*, vakje*, vakje*, vakje*);
 		bool eerste();
-		bool ineenhoek(vakje* p);
 		void negatief(vakje*&, vakje*&);
 		void spiegel(vakje*&, vakje*&, bool);
 		void nrand();
@@ -109,45 +108,45 @@ vakje* rand::vorig(vakje* rvakje){
 
 //Returnt true desda de rand de linkerbovenhoek bevat.
 bool rand::bevatlb(vakje* kvanaf, vakje* ktot){
-	vakje* p = vorig(kvanaf);
+	vakje* p = kvanaf;
 	while(p != ktot){
-		p = volgend(p);
 		if (p->buren[2] == NULL && p->buren[3] == NULL)
 			return true;
-	}
-	return (p->buren[2] == NULL && p->buren[3] == NULL);
+		p = volgend(p);
+	}//while
+	return false;
 }
 
 //Maakt de zwarte vakjes in de rand wit en andersom.
 void rand::negatief(vakje*& kvanaf, vakje*& ktot){
 	vakje* temp = kvanaf;
-	kvanaf = volgend(ktot);
-	ktot = vorig(temp);
+	kvanaf = ktot;
+	ktot = temp;
 }
 
-//Spiegelt een vakje verticaal(true) of horizontaal(false) (snelheid: O(h/b)).
+//Spiegelt een vakje verticaal(false) of horizontaal(true) (snelheid: O(h+b)).
 //Hulpfunctie voor spiegel.
-vakje* rand::spie(vakje* rvakje, bool vertic){
+vakje* rand::spie(vakje* rvakje, bool horiz){
 	int teller = 0;
 	vakje* p = rvakje;
-	while(p->buren[vertic] != NULL){
-		p = p->buren[vertic];
+	while(p->buren[horiz] != NULL){
+		p = p->buren[horiz];
 		teller++;
 	}
 	p = rvakje;
-	while(p->buren[vertic + 2] != NULL)
-		p = p->buren[vertic + 2];
+	while(p->buren[horiz + 2] != NULL)
+		p = p->buren[horiz + 2];
 	for(int i = 0; i < teller; i++)
-		p = p->buren[vertic];
+		p = p->buren[horiz];
 	return p;
 }
 
 
-//Spiegelt de rand verticaal(true) of horizontaal(false).
-void rand::spiegel(vakje*& kvanaf, vakje*& ktot, bool vertic){
+//Spiegelt de rand verticaal(false) of horizontaal(true).
+void rand::spiegel(vakje*& kvanaf, vakje*& ktot, bool horiz){
 	vakje* temp = kvanaf;
-	kvanaf = spie(ktot, vertic);
-	ktot = spie(temp, vertic);
+	kvanaf = volgend(spie(ktot, horiz));
+	ktot = volgend(spie(temp, horiz));
 	if(bevatlb(kvanaf, ktot))
 		negatief(kvanaf, ktot);
 }
@@ -155,25 +154,32 @@ void rand::spiegel(vakje*& kvanaf, vakje*& ktot, bool vertic){
 //Returnt true desda je vakje1 eerder of tegelijk tegenkomt vanaf het vakje
 //rechts van de linkerbovenhoek (kloksgewijs bekeken). Gelijkheid geeft true.
 bool rand::eerderv(vakje* vakje1, vakje* vakje2){
+	if(vakje1 == vakje2)
+		return true;
+	vakje2 = vorig(vakje2);
 	while(vakje2->buren[2] != NULL || vakje2->buren[3] != NULL){
 		if(vakje2 == vakje1)
 			return true;
 		vakje2 = vorig(vakje2);
-	}
-	return (vakje2 == vakje1);
+	}//while
+	return false;
 }//rand::eerderv
 
 //Returnt true desda rand1 eerder zou worden gegenereerd door de "nieuwe rand"-
 //functie dan rand2. Gelijkheid van de randen geeft false.
 bool rand::eerderr(vakje* vanaf1, vakje* tot1, vakje* vanaf2, vakje* tot2){
-	if(!eerderv(vanaf2, vanaf1))
+	if(!eerderv(vanaf2, vanaf1)){
 		return true;
-	else if(!eerderv(vanaf1, vanaf2))
+	}
+	else if(!eerderv(vanaf1, vanaf2)){
 		return false;
-	else if(!eerderv(tot2, tot1))
+	}
+	else if(!eerderv(tot2, tot1)){
 		return true;
-	else
+	}
+	else{
 		return false;
+	}
 }
 
 //Returnt true desda deze rand de eerste is van al zijn spiegelingen.
@@ -187,23 +193,17 @@ bool rand::eerste(){
 	return true;
 }//rand::eerste
 
-//Geeft true desda p een "hoekvakje" aanwijst.
-bool rand::ineenhoek(vakje* p){
-	for(int i = 0; i < 4; i++)
-		if(p->buren[i] == NULL && p->buren[(i+1)%4] == NULL)
-			return true;
-	return false;
-}
-
 //Maakt een volgende rand en let op symmetrie.
 void rand::nrand(){
 	do{
 		tot = volgend(tot);
-		if(tot->buren[2] == NULL && tot->buren[3] == NULL){
+		if(vorig(tot)->buren[2] == NULL && vorig(tot)->buren[3] == NULL){
 			vanaf = volgend(vanaf);
-			tot = vanaf;
+			tot = volgend(vanaf);
 		}
-	}while(!eerste() && !TelAantOpl);
+		if (bevatlb(vanaf, tot))
+			return;
+	}while(!eerste() && (TelAantOpl == 'n'));
 }//rand::nrand
 
 //Deze class zorgt ervoor dat vakjes naar elkaar kunnen wijzen.
@@ -286,7 +286,7 @@ class stapel{
 
 //Constructor voor stapel
 stapel::stapel(){
-	bovenste = new groep;
+	bovenste = NULL;
 }//stapel::stapel
 
 //Zet een nieuwe groep bovenop de stapel.
@@ -370,7 +370,7 @@ void oplossing::bouwbord(){
 		rits(boven, onder);
 		boven = onder;
 	}//for
-	//De volgende vier regels zouden in een rand::functie moeten komen.
+	//De volgende vier functies maken de rand.
 	Rand.vanaf = Rand.tot = start->buren[0];
 	Rand.nrand();
 	vul_rand(Rand);
@@ -597,6 +597,8 @@ void oplossing::niets_geteld(bool slechts_leeg){
 //Kleurt een vakje zwart(true) of wit(false) in.
 void oplossing::vul_in(vakje* p, bool zwart){
 	if(!p->bevat_info){
+		if(Stapel.bovenste == NULL)
+			Stapel.nieuw_op_stapel();
 		p->bevat_info = ingevuld = true;
 		p->info = zwart;
 		Stapel.bovenste->voeg_toe(p);
@@ -619,13 +621,11 @@ void oplossing::vul_opp(bool zwart){
 
 //Kleurt de rand zwart in van "vanaf" tot en met "tot". De rest wordt wit.
 void oplossing::vul_rand(rand Rand){
-	vakje* p = Rand.vorig(Rand.vanaf);
+	vakje* p = Rand.vanaf;
 	while(p != Rand.tot){
+		p->bevat_info = p->info = true;
 		p = Rand.volgend(p);
-		p->bevat_info = true;
-		p->info = true;
 	}//while
-	p = Rand.volgend(p);
 	while(p != Rand.vanaf){
 		p->bevat_info = true;
 		p->info = false;
@@ -866,10 +866,10 @@ void oplossing::zoek_vakje(){
 	do{
 		ingevuld = false;
 		hoek();
-		//diag();
+		diag();
 		rand_eis();
 		spreiding();
-		//ingesloten();
+		ingesloten();
 	}while(ingevuld);
 }//oplossing::zoek_vakje
 
@@ -995,7 +995,6 @@ void oplossing::zoek_opl(){
 					cout << "Er zijn " << aantopl << " oplossingen geteld." << endl;
 				return;
 			}//if
-			Stapel.nieuw_op_stapel();
 			maak_Hoek();
 		}//else
 		if ((teller + 1) % 10000 == 0){
